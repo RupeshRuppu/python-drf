@@ -1,0 +1,31 @@
+DRF - Django Rest Framework
+
+Api -> application programming interface.
+   - it acts as a two way communication bridge between BE & FE.
+
+Rest Api -> Representational state transfer.
+   - stateless ( the server doesn't store any information about the client between requests );
+   - client server architecture;
+   - REST apis rely on set of standard http methods ( get, post, put, delete, patch );
+
+
+Web application endpoints
+   - user can directly access it from web browsers
+API endpoints
+   - returns the data to integrate into the frontend
+   
+
+DATABASES = {
+    "default": {
+        "ENGINE": "django.db.backends.postgresql",
+        "NAME": getenv("DB_NAME"),
+        "USER": getenv("DB_USER"),
+        "PASSWORD": getenv("DB_PASSWORD"),
+        "HOST": getenv("DB_HOST"),
+        "PORT": getenv("DB_PORT"),
+    }
+}
+
+Serialization & De-Serialization
+- modal instances to json/xml form.
+- json to modal instances back is de-serialization

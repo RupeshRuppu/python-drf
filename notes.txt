@@ -35,3 +35,7 @@ Serialization & De-Serialization
 - mixins
 - generics
    - just like mixins provides pre-built mixins classes generics also provides pre-built VIEW classes
+
+
+- viewsets
+- routers

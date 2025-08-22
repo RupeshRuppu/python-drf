@@ -29,3 +29,6 @@ DATABASES = {
 Serialization & De-Serialization
 - modal instances to json/xml form.
 - json to modal instances back is de-serialization
+
+- function based views
+- class based views (more structured & organized way to handle requests using OOPS)

@@ -1,8 +1,11 @@
 from students.models import Student
-from .serializers import StudentSerializer
+from employees.models import Employee
+from .serializers import StudentSerializer, EmployeeSerializer
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.decorators import api_view
+from rest_framework.views import APIView
+from django.http import Http404
 
 
 @api_view(["GET", "POST"])
@@ -37,6 +40,7 @@ def studentDetailView(req, id):
     elif req.method == "PUT":
         student_data = StudentSerializer(student).data
         data = {**student_data, **req.data}
+        # to update resource pass it like this. (record & upadated data)
         serializer = StudentSerializer(student, data=data)
         if serializer.is_valid():
             serializer.save()
@@ -45,4 +49,50 @@ def studentDetailView(req, id):
 
     elif req.method == "DELETE":
         student.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+# employee class based views
+
+
+class Employees(APIView):
+    def get(self, _):
+        employees = Employee.objects.all()
+        serializer = EmployeeSerializer(employees, many=True)
+        return Response(data=serializer.data, status=status.HTTP_200_OK)
+
+    def post(self, req):
+        serializer = EmployeeSerializer(data=req.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class EmployeeDetail(APIView):
+    def get_object(self, id):
+        try:
+            employee = Employee.objects.get(id=id)
+            return employee
+        except Employee.DoesNotExist:
+            raise Http404
+
+    def get(self, _, id):
+        employee = self.get_object(id)
+        serializer = EmployeeSerializer(employee)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    def put(self, req, id):
+        employee = self.get_object(id)
+        employee_data = EmployeeSerializer(employee).data
+        data = {**employee_data, **req.data}
+        serializer = EmployeeSerializer(employee, data=data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def delete(self, _, id):
+        employee = self.get_object(id)
+        employee.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)

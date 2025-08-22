@@ -47,3 +47,13 @@ Serialization & De-Serialization
    - 1 post can have multiple comments
    - we usually create a foreign key relation ship between post & comments
    - let's say you want to fetch a blog with all it's comments that's where the nested serializers comes in.
+
+- django_extensions
+   - python manage.py show_urls 
+
+- drf_spectacular
+   - swagger ui
+
+- pagination
+   - page number pagination
+   - limit offset pagination

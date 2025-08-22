@@ -6,9 +6,11 @@ router = DefaultRouter()
 router.register("employees", views.EmployeeViewset, basename="employee")
 
 urlpatterns = [
+    path("", include(router.urls)),
+    # students
     path("students/", views.studentsView),
     path("students/<str:id>/", views.studentDetailView),
-    path("", include(router.urls)),
+    # blogs,comments
     path("blogs/", views.BlogsView.as_view()),
     path("comments/", views.CommentsView.as_view()),
     path("blogs/<int:id>/", views.BlogDetailView.as_view()),

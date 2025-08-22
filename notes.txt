@@ -41,3 +41,9 @@ Serialization & De-Serialization
 - routers
 
 - viewsets.ModelViewSets
+
+- nested serializers
+   - imagine you have a blog application.
+   - 1 post can have multiple comments
+   - we usually create a foreign key relation ship between post & comments
+   - let's say you want to fetch a blog with all it's comments that's where the nested serializers comes in.

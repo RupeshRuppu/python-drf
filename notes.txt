@@ -39,3 +39,5 @@ Serialization & De-Serialization
 
 - viewsets
 - routers
+
+- viewsets.ModelViewSets

@@ -6,6 +6,7 @@ from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.views import APIView
 from django.http import Http404
+from rest_framework import mixins, generics
 
 
 @api_view(["GET", "POST"])
@@ -55,44 +56,95 @@ def studentDetailView(req, id):
 # employee class based views
 
 
-class Employees(APIView):
-    def get(self, _):
-        employees = Employee.objects.all()
-        serializer = EmployeeSerializer(employees, many=True)
-        return Response(data=serializer.data, status=status.HTTP_200_OK)
+# class Employees(APIView):
+#     def get(self, _):
+#         employees = Employee.objects.all()
+#         serializer = EmployeeSerializer(employees, many=True)
+#         return Response(data=serializer.data, status=status.HTTP_200_OK)
+
+#     def post(self, req):
+#         serializer = EmployeeSerializer(data=req.data)
+#         if serializer.is_valid():
+#             serializer.save()
+#             return Response(serializer.data, status=status.HTTP_201_CREATED)
+#         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+# class EmployeeDetail(APIView):
+#     def get_object(self, id):
+#         try:
+#             employee = Employee.objects.get(id=id)
+#             return employee
+#         except Employee.DoesNotExist:
+#             raise Http404
+
+#     def get(self, _, id):
+#         employee = self.get_object(id)
+#         serializer = EmployeeSerializer(employee)
+#         return Response(serializer.data, status=status.HTTP_200_OK)
+
+#     def put(self, req, id):
+#         employee = self.get_object(id)
+#         employee_data = EmployeeSerializer(employee).data
+#         data = {**employee_data, **req.data}
+#         serializer = EmployeeSerializer(employee, data=data)
+#         if serializer.is_valid():
+#             serializer.save()
+#             return Response(serializer.data, status=status.HTTP_200_OK)
+#         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+#     def delete(self, _, id):
+#         employee = self.get_object(id)
+#         employee.delete()
+#         return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class Employees(
+    mixins.ListModelMixin, mixins.CreateModelMixin, generics.GenericAPIView
+):
+    queryset = Employee.objects.all()
+    serializer_class = EmployeeSerializer
+
+    def get(self, req):
+        return self.list(req)
 
     def post(self, req):
-        serializer = EmployeeSerializer(data=req.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        return self.create(req)
 
 
-class EmployeeDetail(APIView):
-    def get_object(self, id):
+class EmployeeDetail(
+    mixins.RetrieveModelMixin,
+    mixins.UpdateModelMixin,
+    mixins.DestroyModelMixin,
+    generics.GenericAPIView,
+):
+
+    queryset = Employee.objects.all()
+    serializer_class = EmployeeSerializer
+    lookup_field = "id"
+
+    def update(self, request, id):
         try:
             employee = Employee.objects.get(id=id)
-            return employee
         except Employee.DoesNotExist:
-            raise Http404
+            return Response(status=status.HTTP_400_BAD_REQUEST)
 
-    def get(self, _, id):
-        employee = self.get_object(id)
-        serializer = EmployeeSerializer(employee)
-        return Response(serializer.data, status=status.HTTP_200_OK)
-
-    def put(self, req, id):
-        employee = self.get_object(id)
         employee_data = EmployeeSerializer(employee).data
-        data = {**employee_data, **req.data}
+        data = {**employee_data, **request.data}
         serializer = EmployeeSerializer(employee, data=data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_200_OK)
+
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    def delete(self, _, id):
-        employee = self.get_object(id)
-        employee.delete()
-        return Response(status=status.HTTP_204_NO_CONTENT)
+    # primary key based operations
+    def get(self, req, id):
+        return self.retrieve(req, id)
+
+    def put(self, req, id):
+        # self.update(req, id) does the job but needs complete resource object.
+        return self.update(req, id)
+
+    def delete(self, req, id):
+        return self.destroy(req, id)

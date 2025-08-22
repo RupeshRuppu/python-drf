@@ -32,3 +32,4 @@ Serialization & De-Serialization
 
 - function based views
 - class based views (more structured & organized way to handle requests using OOPS)
+- mixins

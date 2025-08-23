@@ -57,3 +57,11 @@ Serialization & De-Serialization
 - pagination
    - page number pagination
    - limit offset pagination
+
+- custom pagination
+- filtering
+   - custom filter employee by designation
+   - custom filter employee by name & id
+   - advanced filtering
+   - search filter
+   - Ordering filter

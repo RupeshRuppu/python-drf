@@ -10,6 +10,10 @@ from django.http import Http404
 from rest_framework import mixins, generics, viewsets
 from blogs.models import Blog, Comment
 from blogs.serializers import BlogSerializer, CommentSerializer
+from api.paginations import CustomEmployeePagination, CustomBlogPagination
+from employees.filters import CustomEmployeeFilter
+from blogs.filters import CustomBlogFilter
+from rest_framework.filters import SearchFilter, OrderingFilter
 
 
 @api_view(["GET", "POST"])
@@ -207,11 +211,19 @@ class EmployeeViewset(viewsets.ViewSet):
 class EmployeeViewset(viewsets.ModelViewSet):
     queryset = Employee.objects.all()
     serializer_class = EmployeeSerializer
+    pagination_class = CustomEmployeePagination
+    filterset_class = CustomEmployeeFilter
 
 
 class BlogsView(generics.ListCreateAPIView):
     queryset = Blog.objects.all()
     serializer_class = BlogSerializer
+    # filterset_class = CustomBlogFilter
+    pagination_class = CustomBlogPagination
+    filter_backends = [SearchFilter, OrderingFilter]
+    search_fields = ["title", "body"]
+    ordering_fields = ["id"]
+    pagination_class = None
 
 
 class CommentsView(generics.ListCreateAPIView):
